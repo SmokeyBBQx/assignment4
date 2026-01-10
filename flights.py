@@ -1,72 +1,98 @@
 import time
 
-flights = {}
-cities = {}
+class FlightData:
+    def __init__(self, location):
+        self.__flights = {}
+        self.__cities = {}
+        self.__parseCSV__(location)
 
-def parseCSV(loc: str):
-    with open(loc) as reader:
-        header = next(reader).strip().split(",")
-        for line in reader:
-            fields = line.strip().split(",")
-            flightId = fields[0]
+    def __parseCSV__(self, loc: str):
+        startTime = time.time()
 
-            flights[flightId] = {}
-            for i in range(1, len(fields) - 1):
-                flights[flightId][header[i]] = fields[i]
-            
-            addCityData(flightId)
-            
-def addCityData(flightId):
-    destination = flights[flightId]["name_ades"]
-    departure = flights[flightId]["name_adep"]
-    month = int(flights[flightId]["date"].split("-")[1]) - 1
+        with open(loc) as reader:
+            header = next(reader).strip().split(",")
+            for line in reader:
+                fields = line.strip().split(",")
+                flightId = fields[0]
 
-    if destination not in cities:
-        cities[destination] = {}
-        cities[destination]["arrival_cities"] = set()
-        cities[destination]["monthly_arrivals"] = [0 for _ in range(12)]
-    cities[destination]["arrival_cities"].add(departure)
-    cities[destination]["monthly_arrivals"][month] += 1
+                self.__flights[flightId] = {}
+                for i in range(1, len(fields) - 1):
+                    self.__flights[flightId][header[i]] = fields[i]
+                
+                self.__addCityData__(flightId)
+        
+        print("Parsing CSV finished in %s seconds" % (time.time() - startTime))
+                
+    def __addCityData__(self, flightId):
+        destination = self.__flights[flightId]["name_ades"]
+        departure = self.__flights[flightId]["name_adep"]
+        month = int(self.__flights[flightId]["date"].split("-")[1]) - 1
 
-def getMonthlyArrivals(city):
-    return cities[city]["monthly_arrivals"]
+        if destination not in self.__cities:
+            self.__cities[destination] = {}
+            self.__cities[destination]["arrival_cities"] = set()
+            self.__cities[destination]["monthly_arrivals"] = [0 for _ in range(12)]
+        self.__cities[destination]["arrival_cities"].add(departure)
+        self.__cities[destination]["monthly_arrivals"][month] += 1
 
-def getDepartureCitiesToCity(city):
-    return cities[city]["arrival_cities"]
+    def getMonthlyArrivals(self, city):
+        startTime = time.time()
 
-def getTotalFlightsBetween(startDay, startMonth, startYear, endDay, endMonth, endYear):
-    count = 0
-    for flight in flights.values():
-        date = flight["date"].split("-")
-        year = int(date[0])
-        month = int(date[1])
-        day = int(date[2])
+        monthlyArrivals = self.__cities[city]["monthly_arrivals"]
 
-        flightDate = year * 10000 + month * 100 + day
-        startDate = startYear * 10000 + startMonth * 100 + startDay
-        endDate = endYear * 10000 + endMonth * 100 + endDay
+        print("getMonthlyArrivals took %s seconds" % (time.time() - startTime))
 
-        if startDate <= flightDate <= endDate:
-            count += 1
-    return count
+        return monthlyArrivals
 
-startTime = time.time()
-parseCSV("C:\\Users\\SmokeyBBQ\\Desktop\\assignment4\\assignment4\\flight_list.csv")
-endTime = time.time()
-print("Importing finished in %s seconds" % (endTime - startTime))
+    def getDepartureCitiesToDestination(self, city):
+        startTime = time.time()
 
-startTime = endTime
-monthlyArrivals = getMonthlyArrivals("Copenhagen")
-endTime = time.time()
-print("getMonthlyArrivals took %s seconds" % (endTime - startTime))
+        arrivalCities = self.__cities[city]["arrival_cities"]
 
-startTime = endTime
-departureCities = getDepartureCitiesToCity("Ibiza")
-endTime = time.time()
-print("getDepartureCitiesToCity took %s seconds" % (endTime - startTime))
+        print("getDepartureCitiesToDestination took %s seconds" % (time.time() - startTime))
 
-startTime = endTime
-totalFlights = getTotalFlightsBetween(20, 3, 2022, 21, 6, 2022)
-endTime = time.time()
-print("getTotalFlightsBetween took %s seconds" % (endTime - startTime))
+        return arrivalCities
 
+    def getTotalFlightsBetween(self, startDay, startMonth, startYear, endDay, endMonth, endYear):
+        startTime = time.time()
+
+        count = 0
+        for flight in self.__flights.values():
+            date = flight["date"].split("-")
+            year = int(date[0])
+            month = int(date[1])
+            day = int(date[2])
+
+            flightDate = year * 10000 + month * 100 + day
+            startDate = startYear * 10000 + startMonth * 100 + startDay
+            endDate = endYear * 10000 + endMonth * 100 + endDay
+
+            if startDate <= flightDate <= endDate:
+                count += 1
+
+        print("getTotalFlightsBetween took %s seconds" % (time.time() - startTime))
+
+        return count
+
+flightData = FlightData("flight_list.csv")
+
+monthlyArrivals = flightData.getMonthlyArrivals("Copenhagen")
+departureCities = flightData.getDepartureCitiesToDestination("Ibiza")
+totalFlights = flightData.getTotalFlightsBetween(20, 3, 2022, 21, 6, 2022)
+
+print(f"Monthly Arrivals to Copenhagen: {monthlyArrivals}")
+print(f"Departure Cities to Ibiza: {departureCities}")
+print(f"Total Flights in Spring 2022: {totalFlights}")
+
+def createTestCSV(fileName, content):
+    with open(fileName, 'w') as f:
+        f.write(content)
+
+def runTest(testName, testFunction):
+    result = testFunction()
+    if result == True:
+        print(f"{testName} PASS")
+    else:
+        print(f"{testName} FAIL")
+
+def testSingleFlight():

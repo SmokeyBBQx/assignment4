@@ -5,7 +5,7 @@ flightData = flights.FlightData("flight_list.csv")
 
 monthlyArrivals = flightData.getMonthlyArrivals("Copenhagen")
 departureCities = flightData.getDepartureCitiesToDestination("Ibiza")
-totalFlights = flightData.getTotalFlightsBetween(2022, 3, 20, 2022, 6, 21)
+totalFlights = flightData.getTotalFlightsBetween((2022, 3, 20), (2022, 6, 21))
 
 print(f"Monthly Arrivals to Copenhagen: {monthlyArrivals}")
 print(f"Departure Cities to Ibiza: {departureCities}")
@@ -53,7 +53,7 @@ runTest(
     lambda fd: [
         ("Arrivals in March", fd.getMonthlyArrivals("London")[2], 1),
         ("Departure Cities to Paris", fd.getDepartureCitiesToDestination("Paris"), {"Berlin"}),
-        ("Total Flights in 2022", fd.getTotalFlightsBetween(2022, 1, 1, 2022, 12, 31), 2)
+        ("Total Flights in 2022", fd.getTotalFlightsBetween((2022, 1, 1), (2022, 12, 31)), 2)
     ]
 )
 
@@ -66,7 +66,7 @@ runTest(
     lambda fd: [
         ("June arrivals to Berlin", fd.getMonthlyArrivals("Berlin")[5], 2),
         ("Departure Cities to Berlin", fd.getDepartureCitiesToDestination("Berlin"), {"Paris", "Madrid"}),
-        ("Total Flights in June", fd.getTotalFlightsBetween(2022, 6, 1, 2022, 6, 30), 2)
+        ("Total Flights in June", fd.getTotalFlightsBetween((2022, 6, 1), (2022, 6, 30)), 2)
     ]
 )
 
@@ -78,8 +78,8 @@ runTest(
     2,Paris,Berlin,2021-04-15""",
     lambda fd: [
         ("April arrivals to Berlin", fd.getMonthlyArrivals("Berlin")[3], 2),
-        ("Total Flights From 2020-1-1 to 2021-12-31", fd.getTotalFlightsBetween(2020, 1, 1, 2021, 12, 31), 2),
-        ("Total Flights", fd.getTotalFlightsBetween(2020, 1, 1, 2022, 12, 31), 3)
+        ("Total Flights From 2020-1-1 to 2021-12-31", fd.getTotalFlightsBetween((2020, 1, 1), (2021, 12, 31)), 2),
+        ("Total Flights", fd.getTotalFlightsBetween((2020, 1, 1), (2022, 12, 31)), 3)
     ]
 )
 
@@ -88,7 +88,7 @@ runTest(
     "flight_id,date,callsign,adep,name_adep,country_code_adep,ades,name_ades,country_code_ades,actual_offblock_time,arrival_time,aircraft_type,wtc,airline,flight_duration,taxiout_time,flown_distance,tow,",
     lambda fd: [
         ("April arrivals to Berlin", fd.getMonthlyArrivals("Berlin")[3], 0),
-        ("Total Flights", fd.getTotalFlightsBetween(2022, 1, 1, 2022, 12, 31), 0)
+        ("Total Flights", fd.getTotalFlightsBetween((2022, 1, 1), (2022, 12, 31)), 0)
     ]
 )
 
@@ -99,7 +99,7 @@ runTest(
     lambda fd: [
         ("April arrivals to Berlin", fd.getMonthlyArrivals("Berlin")[3], 1),
         ("Departure Cities to Berlin", fd.getDepartureCitiesToDestination("Berlin"), {"Paris"}),
-        ("Total Flights", fd.getTotalFlightsBetween(2022, 1, 1, 2022, 12, 31), 1)
+        ("Total Flights", fd.getTotalFlightsBetween((2022, 1, 1), (2022, 12, 31)), 1)
     ]
 )
 
@@ -110,7 +110,7 @@ runTest(
     lambda fd: [
         ("April arrivals to Berlin", fd.getMonthlyArrivals("Berlin")[3], 1),
         ("Departure Cities to Berlin", fd.getDepartureCitiesToDestination("Berlin"), {"Berlin"}),
-        ("Total Flights", fd.getTotalFlightsBetween(2022, 1, 1, 2022, 12, 31), 1)
+        ("Total Flights", fd.getTotalFlightsBetween((2022, 1, 1), (2022, 12, 31)), 1)
     ]
 )
 
@@ -134,7 +134,7 @@ runTest(
     lambda fd: [
         ("June arrivals to Berlin", fd.getMonthlyArrivals("Berlin")[5], 2),
         ("Departure Cities to Berlin", fd.getDepartureCitiesToDestination("Berlin"), {"Paris", "Madrid"}),
-        ("Total Flights in June", fd.getTotalFlightsBetween(2022, 6, 1, 2022, 6, 30), 2)
+        ("Total Flights in June", fd.getTotalFlightsBetween((2022, 6, 1), (2022, 6, 30)), 2)
     ]
 )
 
@@ -147,7 +147,7 @@ runTest(
     1,Madrid,Berlin,2022-06-20
     2,Paris,Berlin,2022-04-15""",
     lambda fd: [
-        ("Total Flights on Same Day", fd.getTotalFlightsBetween(2022, 4, 15, 2022, 4, 15), 1)
+        ("Total Flights on Same Day", fd.getTotalFlightsBetween((2022, 4, 15), (2022, 4, 15)), 1)
     ]
 )
 
@@ -158,7 +158,7 @@ runTest(
     1,Madrid,Berlin,2022-06-20
     2,Paris,Berlin,2022-04-15""",
     lambda fd: [
-        ("Total Flights in 2021", fd.getTotalFlightsBetween(2021, 6, 1, 2021, 6, 30), 0)
+        ("Total Flights in 2021", fd.getTotalFlightsBetween((2021, 6, 1), (2021, 6, 30)), 0)
     ]
 )
 
@@ -169,7 +169,7 @@ runTest(
     1,Madrid,Berlin,2022-06-20
     2,Paris,Berlin,2022-04-15""",
     lambda fd: [
-        ("Total Flights in 2021", fd.getTotalFlightsBetween(0, 0, 0, 0, 0, 0), 0)
+        ("Total Flights in 2021", fd.getTotalFlightsBetween((0, 0, 0), (0, 0, 0)), 0)
     ]
 )
 

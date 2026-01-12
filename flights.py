@@ -61,7 +61,7 @@ class FlightData:
 
         return arrivalCities
 
-    def getTotalFlightsBetween(self, startYear, startMonth, startDay, endYear, endMonth, endDay):
+    def getTotalFlightsBetween(self, startDate, endDate):
         startTime = time.time()
 
         count = 0
@@ -74,11 +74,7 @@ class FlightData:
             month = int(date[1])
             day = int(date[2])
 
-            flightDate = year * 10000 + month * 100 + day
-            startDate = startYear * 10000 + startMonth * 100 + startDay
-            endDate = endYear * 10000 + endMonth * 100 + endDay
-
-            if startDate <= flightDate <= endDate:
+            if startDate <= (year, month, day) <= endDate:
                 count += 1
 
         print("getTotalFlightsBetween took %s seconds" % (time.time() - startTime))
